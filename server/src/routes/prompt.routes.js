@@ -2,10 +2,9 @@ const express = require('express');
 const authMiddleware = require('../middlewares/auth.middleware');
 
 const router = express.Router();
-
-router.get('/profile', authMiddleware, async (req, res) => {
-    console.log('Hello how are you');
-    res.send('Hello wordl Hi');
-});
+router.use(authMiddleware);
+router.get('/', (req ,res) => {});
+router.post('/', (req, res) => {});
+router.delete('/', (req, res) => {});
 
 module.exports = router;
