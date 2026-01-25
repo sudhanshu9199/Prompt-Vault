@@ -1,0 +1,15 @@
+.videoLoaderContainer{
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: black;
+
+    .video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
