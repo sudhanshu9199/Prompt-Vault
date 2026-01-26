@@ -1,0 +1,163 @@
+.mobileTopBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  //   background: #0f172a;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem;
+  z-index: 200;
+  color: rgb(12, 108, 210);
+
+  .logo {
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+
+  .rightSection {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    
+    .user {
+        border: 2px solid red;
+      border-radius: 50%;
+      width: 2.3rem;
+      height: 2.3rem;
+      overflow: hidden;
+    }
+  }
+}
+
+.navbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  height: 64px;
+  width: 100%;
+  background: #0f172a;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  //   z-index: 150;
+}
+
+.desktopHeader,
+.desktopFooter {
+  display: none;
+}
+
+.navList {
+  display: flex;
+  gap: 0.8rem;
+}
+.navItem {
+  color: #cbd5f5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0 0.2rem;
+  .icon {
+    font-size: 1.3rem;
+  }
+
+  .label {
+    font-size: 0.8rem;
+  }
+  &:hover {
+    color: #38dbf8;
+    transform: translateY(-2px);
+  }
+}
+
+@media (min-width: 768px) {
+  .mobileTopBar {
+    display: none;
+  }
+  .navbar {
+    top: 0;
+    bottom: auto;
+    width: 220px;
+    max-width: 270px;
+    height: 100vh;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1.5rem 1rem;
+  }
+
+  .desktopHeader {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    .logo {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: white;
+    }
+
+    .newPromptBtn {
+      background: #38bdf8;
+      border: none;
+      padding: 0.6rem;
+      border-radius: 6px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+  }
+
+  .navList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .navItem {
+    flex-direction: row;
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    align-items: center;
+    gap: 0.5rem;
+
+    .icon {
+      font-size: 1.4rem;
+    }
+
+    .label {
+      font-size: 1rem;
+    }
+
+    &:hover {
+      background: rgba(56, 189, 248, 0.1);
+      border-left: 4px solid #38bdf8;
+      transform: translateX(4px);
+    }
+  }
+
+  .desktopFooter {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    color: white;
+
+    .userCard {
+      border: 2px solid red;
+      border-radius: 50%;
+      width: 5.5vw;
+      height: 5.5vw;
+      overflow: hidden;
+
+      .avatar {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+  }
+}

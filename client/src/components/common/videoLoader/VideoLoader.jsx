@@ -4,7 +4,6 @@ import splashVideo from '../../../assets/splashVideo.mp4';
 import style from './videoLoaderStyle.module.scss';
 import { useRef } from "react";
 
-
 gsap.registerPlugin(useGSAP);
 const VideoLoader = (onFinished) => {
   const containerRef = useRef();
@@ -18,7 +17,7 @@ const VideoLoader = (onFinished) => {
       duration: 1,
       ease: "power2.inOut"
     });
-  }, { scope: containerRef});
+  }, { scope: containerRef });
 
   const runExitAnimation = () => {
     gsap.to(containerRef.current, {
@@ -42,4 +41,4 @@ const VideoLoader = (onFinished) => {
     </div>
   )
 }
-export default VideoLoader
+export default VideoLoader;

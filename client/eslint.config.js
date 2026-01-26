@@ -27,3 +27,6 @@ export default defineConfig([
     },
   },
 ])
+
+// Optimized the React file
+// Here is link: https://docs.google.com/document/d/17TEvkDGoFMTyrdZuCGXp6GvR6vihSRzF-_bT56yNPlc/edit?usp=sharing
