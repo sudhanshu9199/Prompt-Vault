@@ -1,0 +1,38 @@
+.toggleContainer {
+  width: 65px;
+  height: 30px;
+  background: #e2e8f0;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+.toggleContainer.dark {
+  background: #1e293b;
+}
+.toggleContainer .iconWrapper {
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  color: #64748b;
+  font-size: 15px;
+  padding: 0 0.15rem;
+}
+.toggleContainer .ball {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  background: white;
+  border-radius: 50%;
+  left: 3px;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.toggleContainer.dark .ball {
+  transform: translateX(30px);
+  background: #38bdf8;
+}/*# sourceMappingURL=ThemeToggle.module.css.map */

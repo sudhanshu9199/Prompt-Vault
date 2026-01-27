@@ -3,6 +3,7 @@ import { AiOutlineHome } from "react-icons/ai";
 import { LuLockKeyhole, LuGlobe } from "react-icons/lu";
 import { MdFavoriteBorder } from "react-icons/md";
 import { BsMoonStars, BsSun } from "react-icons/bs";
+import ThemeToggle from "../ThemeToggle/ThemeToggle";
 
 const Navbar = () => {
   const navItems = [
@@ -18,9 +19,7 @@ const Navbar = () => {
         <div className={style.logo}>PromptVault</div>
         <div className={style.rightSection}>
           <div className={style.user}>👤</div>
-          <button className={style.themeToggle}>
-            <BsMoonStars />
-          </button>
+          <ThemeToggle />
         </div>
       </header>
 
@@ -41,12 +40,10 @@ const Navbar = () => {
         </div>
 
         <div className={style.desktopFooter}>
-            <div className={style.userCard}>
-                <div className={style.avatar}>👤</div>
-            </div>
-        <button className={style.themeToggle}>
-            <BsSun />
-        </button>
+          <div className={style.userCard}>
+            <div className={style.avatar}>👤</div>
+          </div>
+          <ThemeToggle />
         </div>
       </nav>
     </>
