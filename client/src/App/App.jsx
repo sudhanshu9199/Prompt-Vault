@@ -1,7 +1,8 @@
+import style from './App.module.scss';
 import { useEffect, useState } from "react";
-import VideoLoader from "./components/common/videoLoader/VideoLoader"
-import Home from "./pages/Home/Home"
-import Navbar from "./components/Navbar/Navbar";
+import VideoLoader from "../components/common/videoLoader/VideoLoader"
+import Home from "../pages/Home/Home"
+import Navbar from "../components/Navbar/Navbar";
 
 const App = () => {
   const [showLoader, setshowLoader] = useState(true);
@@ -10,9 +11,11 @@ const App = () => {
     setshowLoader(false);
   };
   return (
-    <div style={{ overflow: 'hidden', height: "100vh"}}>
+    <div className={style.app}>
       <Navbar />
-      <Home />
+      <main className={style.content}>
+        <Home />
+      </main>
       {/* { showLoader && <VideoLoader onFinished = {handleLoaderFinished} />} */}
     </div>
   )

@@ -2,7 +2,6 @@ import style from "./Navbar.module.scss";
 import { AiOutlineHome } from "react-icons/ai";
 import { LuLockKeyhole, LuGlobe } from "react-icons/lu";
 import { MdFavoriteBorder } from "react-icons/md";
-import { BsMoonStars, BsSun } from "react-icons/bs";
 import ThemeToggle from "../ThemeToggle/ThemeToggle";
 
 const Navbar = () => {

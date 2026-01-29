@@ -1,0 +1,12 @@
+.app {
+  height: 100vh;
+}
+.app .content {
+  padding-top: 50px;
+}
+@media (min-width: 768px) {
+  .app .content {
+    border: 2px solid red;
+    margin-left: 220px;
+  }
+}/*# sourceMappingURL=App.module.css.map */

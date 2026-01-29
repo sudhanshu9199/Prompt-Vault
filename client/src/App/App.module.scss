@@ -1,0 +1,15 @@
+.app {
+//   overflow: hidden;
+  height: 100vh;
+
+  .content {
+    padding-top: 50px;
+    // padding-bottom: 64px;
+
+    @media (min-width: 768px) {
+      border: 2px solid red;
+      margin-left: 220px;
+    //   padding: 2rem;
+    }
+  }
+}
