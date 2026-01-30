@@ -1,10 +1,11 @@
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import App from './App/App.jsx'
+import Mainrouter from './routes/MainRoutes.jsx';
 import { ThemeProvider } from './context/ThemeContext.jsx'
+import { RouterProvider } from 'react-router';
 
 createRoot(document.getElementById('root')).render(
     <ThemeProvider>
-        <App />
+        <RouterProvider router={Mainrouter} />
     </ThemeProvider>
 )

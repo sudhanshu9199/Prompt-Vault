@@ -1,8 +1,8 @@
 import style from './App.module.scss';
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import VideoLoader from "../components/common/videoLoader/VideoLoader"
-import Home from "../pages/Home/Home"
 import Navbar from "../components/Navbar/Navbar";
+import { Outlet } from 'react-router';
 
 const App = () => {
   const [showLoader, setshowLoader] = useState(true);
@@ -14,7 +14,9 @@ const App = () => {
     <div className={style.app}>
       <Navbar />
       <main className={style.content}>
-        <Home />
+        <Suspense>
+          <Outlet />
+        </Suspense>
       </main>
       {/* { showLoader && <VideoLoader onFinished = {handleLoaderFinished} />} */}
     </div>
