@@ -1,6 +1,7 @@
 import style from "./Home.module.scss";
-import { FiGlobe, FiHeart, FiCopy, FiMaximize2 } from "react-icons/fi";
-import { AiOutlineLike } from 'react-icons/ai';
+import { FiGlobe, FiCopy, FiMaximize2 } from "react-icons/fi";
+import { AiOutlineLike } from "react-icons/ai";
+import Masonry from "react-masonry-css";
 
 const cards = Array(10)
   .fill(0)
@@ -13,6 +14,12 @@ const cards = Array(10)
     tag: "AI",
   }));
 const Home = () => {
+  const breakpointColumnsObj = {
+    default: 4,
+    1599: 3,
+    1100: 2,
+    700: 1,
+  };
   return (
     <div className={style.homePage}>
       <div className={style.header}>
@@ -32,9 +39,11 @@ const Home = () => {
         </div>
       </div>
 
-      <div className={style.grid}>
-        {cards.map((card) => (
-          <div className={style.card}>
+      {/* <div className={style.grid}> */}
+      <Masonry
+       breakpointCols={breakpointColumnsObj} className={style.masonryGrid} columnClassName={style.masonryGridColumn} >
+        {cards.map((card, idx) => (
+          <div className={style.card} key={idx}>
             <div className={style.cardTop}>
               <span className={style.tag}>{card.tag}</span>
               <FiGlobe className={style.publicIcon} />
@@ -58,7 +67,8 @@ const Home = () => {
             </div>
           </div>
         ))}
-      </div>
+      </Masonry>
+      {/* </div> */}
     </div>
   );
 };

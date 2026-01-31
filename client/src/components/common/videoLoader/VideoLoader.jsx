@@ -1,6 +1,7 @@
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 import splashVideo from '../../../assets/splashVideo.mp4';
+import mobileSplashVideo from '../../../assets/mobileSplashVideo.mp4';
 import style from './videoLoaderStyle.module.scss';
 import { useRef } from "react";
 
@@ -8,6 +9,9 @@ gsap.registerPlugin(useGSAP);
 const VideoLoader = (onFinished) => {
   const containerRef = useRef();
   const videoRef = useRef();
+
+  const isMobile = window.innerWidth < 768;
+  const currentVideo = isMobile ? mobileSplashVideo : splashVideo;
 
   useGSAP(() => {
     const tl = gsap.timeline();
@@ -36,7 +40,7 @@ const VideoLoader = (onFinished) => {
   }, []);
   return (
     <div ref={containerRef} className={style.videoLoaderContainer}>
-        <video ref={videoRef} src={splashVideo}
+        <video ref={videoRef} src={currentVideo}
         autoPlay muted playsInline loop className={style.video} />
     </div>
   )
