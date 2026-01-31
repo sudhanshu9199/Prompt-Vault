@@ -11,6 +11,8 @@
   padding: 0 1rem;
   z-index: 200;
   color: rgb(12, 108, 210);
+  transition: transform 0.3s ease-in-out;
+  background: inherit;
 
   .logo {
     font-weight: 600;
@@ -21,15 +23,19 @@
     display: flex;
     gap: 1rem;
     align-items: center;
-    
+
     .user {
-        border: 2px solid red;
+      border: 2px solid red;
       border-radius: 50%;
       width: 2.3rem;
       height: 2.3rem;
       overflow: hidden;
     }
   }
+}
+
+.headerHidden {
+  transform: translateY(-100%);
 }
 
 .navbar {
@@ -42,7 +48,8 @@
   display: flex;
   justify-content: space-around;
   align-items: center;
-    z-index: 150;
+  z-index: 150;
+  transition: transform 0.3s ease-in-out;
 }
 
 .desktopHeader,
@@ -62,6 +69,11 @@
   cursor: pointer;
   transition: all 0.2s ease;
   padding: 0 0.2rem;
+  text-decoration: none;
+
+  &.active {
+    color: #38dbf8;
+  }
   .icon {
     font-size: 1.3rem;
   }
@@ -133,9 +145,15 @@
       font-size: 1rem;
     }
 
-    &:hover {
-      background: rgba(56, 189, 248, 0.1);
+    &.active {
+      background: rgba(56, 189, 248, 0.15);
       border-left: 4px solid #38bdf8;
+      color: #38bdf8;
+    }
+
+    &:hover:not(.active) {
+      background: rgba(56, 189, 248, 0.1);
+      border-left: 4px solid rgba(56, 189, 248, 0.5);
       transform: translateX(4px);
     }
   }
