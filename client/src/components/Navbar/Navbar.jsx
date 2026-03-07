@@ -13,7 +13,7 @@ const Navbar = () => {
   const navItems = [
     { name: "All Prompts", icon: <AiOutlineHome />, path: '/' },
     { name: "Personal Vault", icon: <LuLockKeyhole />, path: '/personal-vault' },
-    { name: "Community Hub", icon: <LuGlobe />, path: '/' },
+    { name: "Community Hub", icon: <LuGlobe />, path: '/community' },
     { name: "Favorites", icon: <MdFavoriteBorder />, path: '/favourites' },
   ];
   return (

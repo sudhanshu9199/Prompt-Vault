@@ -3,6 +3,8 @@ import { lazy } from "react";
 import App from "../App/App";
 import Favorites from "../pages/Favorites/Favorites";
 import PersonalVault from "../pages/PersonalVault/PersonalVault";
+import Login from "../pages/Auth/Login/Login";
+import Register from "../pages/Auth/Register/Register";
 const Home = lazy(() => import("../pages/Home/Home"));
 
 const Mainrouter = createBrowserRouter([
@@ -19,9 +21,17 @@ const Mainrouter = createBrowserRouter([
         element: <Favorites />,
       },
       {
-        path: 'personal-vault',
-        element: <PersonalVault />
+        path: "personal-vault",
+        element: <PersonalVault />,
       },
+      {
+        path: 'Login',
+        element: <Login />
+      },
+      {
+        path: 'register',
+        element: <Register />
+      }
     ],
   },
 ]);
