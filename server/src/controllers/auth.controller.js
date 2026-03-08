@@ -2,85 +2,160 @@ const userModel = require("../models/User.models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const SALT_ROUNDS = 12; // 12 is for prodution safe
+const FULL_NAME_MIN_LENGTH = 2;
+const FULL_NAME_MAX_LENGTH = 60;
+const PASSWORD_MIN_LENGTH = 8;
+
+const generateToken = (payload) => {
+  if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET is not defined in environment variables.');
+  }
+  return jwt.sign(payload, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN || '7d',
+  });
+};
+
+const sanitizeName = (name) => name.trim().replace(/\s+/g, " ");
+
+// register controller
 const registerController = async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { fullName, email, password } = req.body;
 
-    if (!username || !password) {
+    const sanitizedName = sanitizeName(fullName);
+
+    if (sanitizedName.length < FULL_NAME_MIN_LENGTH) {
       return res.status(400).json({
-        message: "Username & password are required!",
+        success: false,
+        message: `Full name must be at least ${FULL_NAME_MIN_LENGTH} characters long.`
+      })
+    }
+
+    if (sanitizedName.length > FULL_NAME_MAX_LENGTH) {
+      return res.status(400).json({
+        success: false,
+        message: `Full name must not exceed ${FULL_NAME_MAX_LENGTH} characters.`,
       });
     }
+
+
+    if (!fullName || !email || !password) {
+      return res.status(400).json({
+        message: "Full name, Email & password are required!",
+      });
+    }
+
+    if (!EMAIL_REGEX.test(email)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invaliid email format.',
+      });
+    }
+
+    if (password.length < PASSWORD_MIN_LENGTH) {
+      return res.status(400).json({
+        success: false,
+        message: `Password must be at least ${PASSWORD_MIN_LENGTH} characters long.`,
+      });
+    }
+
     const userExists = await userModel.findOne({
-      username: username.toLowerCase(),
+      email: email.toLowerCase().trim(),
     });
 
     if (userExists) {
-      return res.status(400).json({
-        message: "Username already exists.",
+      return res.status(409).json({ // 409 conflict is more accurate than 400
+        success: false,
+        message: "An account with this email already exists.",
       });
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashPassword = await bcrypt.hash(password, salt);
+    const hashPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
     const newUser = await userModel.create({
-      username: username.toLowerCase(),
+      FullName: sanitizedName,
+      email: email.toLowerCase().trim(),
       password: hashPassword,
     });
 
-    const userResponse = newUser.toObject();
+    // const userResponse = newUser.toObject();
     // delete userResponse.password
 
-    res.status(201).json({
+    const userResponse = {
+      _id: newUser._id,
+      fullName: newUser.fullName,
+      email: newUser.email,
+      createdAt: newUser.createdAt,
+    };
+
+    return res.status(201).json({
+      success: true,
       message: "User registered successfully!",
       user: userResponse,
     });
+
   } catch (err) {
-    console.error("Register Error:", err);
-    res.status(500).json({
-      message: "Server error",
+    console.error("Register Error:", err.message);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server error. Please try again later.",
     });
   }
 };
 
+// login controller
 const loginController = async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email and password are required.',
+      });
+    }
 
     const user = await userModel.findOne({
-      username: username.toLowerCase(),
-    });
+      email: email.toLowerCase().trim(),
+    }).select('+password');
+
     if (!user) {
-      return res.status(404).json({
+      return res.status(401).json({
+        success: false,
         message: "Invalid credential",
       });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
+
     if (!isMatch) {
       return res.status(401).json({
-        message: "Invalid password",
+        success: false,
+        message: "Invalid credential",
       });
     }
 
-    const token = jwt.sign(
-      { userId: user._id, username: user.username },
-      process.env.JWT_SECRET || "default_secret_key",
-    );
+    const token = generateToken({
+      userId: user._id,
+      email: user.email,
+    });
 
     res.status(200).json({
       message: "Login successful",
       token,
       user: {
         _id: user._id,
-        username: user.username,
+        fullName: user.fullName,
+        email: user.email,
       },
     });
   } catch (err) {
-    console.error("Login Error", err);
+    console.error("Login Error", err.message);
     res.status(500).json({
-      message: "Server error",
+      success: false,
+      message: "Internal server error. Please try again later.",
     });
   }
 };
