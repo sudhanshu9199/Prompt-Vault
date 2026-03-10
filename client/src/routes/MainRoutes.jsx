@@ -1,11 +1,13 @@
 import { createBrowserRouter } from "react-router";
 import { lazy } from "react";
 import App from "../App/App";
-import Favorites from "../pages/Favorites/Favorites";
-import PersonalVault from "../pages/PersonalVault/PersonalVault";
-import Login from "../pages/Auth/Login/Login";
-import Register from "../pages/Auth/Register/Register";
+import ProtectedRoute from "./ProtectedRoute";
+
 const Home = lazy(() => import("../pages/Home/Home"));
+const Register = lazy(() => import("../pages/Auth/Register/Register"));
+const Login = lazy(() => import("../pages/Auth/Login/Login"));
+const PersonalVault = lazy(() => import("../pages/PersonalVault/PersonalVault"));
+const Favorites = lazy(() => import("../pages/Favorites/Favorites"));
 
 const Mainrouter = createBrowserRouter([
   {
@@ -16,6 +18,7 @@ const Mainrouter = createBrowserRouter([
         index: true,
         element: <Home />,
       },
+      <Route element={<ProtectedRoute />}>
       {
         path: "favourites",
         element: <Favorites />,
@@ -24,6 +27,7 @@ const Mainrouter = createBrowserRouter([
         path: "personal-vault",
         element: <PersonalVault />,
       },
+      </Route>
       {
         path: 'Login',
         element: <Login />
