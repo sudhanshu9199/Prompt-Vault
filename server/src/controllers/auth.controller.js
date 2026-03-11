@@ -160,4 +160,5 @@ const loginController = async (req, res) => {
   }
 };
 
+const getMe = async (req, res) => {}
 module.exports = { registerController, loginController };

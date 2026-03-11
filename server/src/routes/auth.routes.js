@@ -8,5 +8,6 @@ router.post("/register", registerController);
 router.post("/login", loginController);
 
 router.get('/user', async(req, res) => {})
+router.get('/me', authMiddleware, getMe)
 
 module.exports = router;
