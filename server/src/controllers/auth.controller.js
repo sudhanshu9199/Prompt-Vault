@@ -75,7 +75,7 @@ const registerController = async (req, res) => {
     const hashPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
     const newUser = await userModel.create({
-      FullName: sanitizedName,
+      fullName: sanitizedName,
       email: email.toLowerCase().trim(),
       password: hashPassword,
     });
@@ -160,5 +160,31 @@ const loginController = async (req, res) => {
   }
 };
 
-const getMe = async (req, res) => {}
-module.exports = { registerController, loginController };
+const getMe = async (req, res) => {
+  try {
+    const user = await userModel.findById(req.user.userId).select('-password');
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      user: {
+        _id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+      },
+    });
+  } catch (err) {
+    console.error('GetMe Error:', err.message);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error.",
+    });
+  }
+};
+module.exports = { registerController, loginController, getMe };

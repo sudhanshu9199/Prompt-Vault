@@ -18,7 +18,7 @@ const App = () => {
           <Outlet />
         </Suspense>
       </main>
-      { showLoader && <VideoLoader onFinished = {handleLoaderFinished} />}
+      {/* { showLoader && <VideoLoader onFinished = {handleLoaderFinished} />} */}
     </div>
   )
 }
