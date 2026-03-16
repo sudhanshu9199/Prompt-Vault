@@ -10,28 +10,6 @@ import api from "../api/axios";
 
 const AuthContext = createContext(null);
 
-const getToken = () => {
-  try {
-    return localStorage.getItem("token");
-  } catch (err) {
-    return null;
-  }
-};
-
-const saveToken = (token) => {
-  try {
-    localStorage.setItem("token", token);
-  } catch (err) {
-    console.error("Auth: Failed to persist token.");
-  }
-};
-
-const removeToken = () => {
-  try {
-    localStorage.removeItem("token");
-  } catch (err) {}
-};
-
 export const AuthProvider = ({ children }) => {
   const [user, setuser] = useState(null);
   const [loading, setloading] = useState(true);
@@ -39,11 +17,6 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const token = getToken();
-      if (!token) {
-        setloading(false);
-        return;
-      }
 
       try {
         const { data } = await api.get("/auth/me");
@@ -64,12 +37,24 @@ export const AuthProvider = ({ children }) => {
     try {
         seterror(null);
         const { data } = await api.post("/auth/login", credentials);
-        saveToken(data.token);
         setuser(data.user);
     } catch (err) {
         const message = err?.response?.data?.message || "Login failed. Please try again.";
         seterror(message);
         throw new Error(message);
+    }
+  }, []);
+
+  const register = useCallback(async (credentials) => {
+    try {
+      seterror(null);
+      const { data } = await api.post('/auth/register', credentials);
+      setuser(data.user);
+      return data;
+    } catch (err) {
+      const message = err?.response?.data?.message || "Registration failed. Please try again.";
+      seterror(message);
+      throw new Error(message);
     }
   }, []);
 
@@ -82,9 +67,9 @@ export const AuthProvider = ({ children }) => {
   const contextValue = useMemo(
     () => ({
         user, loading, error, isAuthenticated: !!user,
-        login, logout,
+        login, logout, register
     }),
-    [user, loading, error, login, logout]
+    [user, loading, error, login, logout, register]
   );
 
   return (
@@ -94,4 +79,15 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+
+  if (context === null) {
+    throw new Error(
+      "[useAuth]: Must be used inside <AuthProvider>. " +
+        "Wrap your component tree with <AuthProvider>."
+    );
+  }
+  
+  return context;
+}

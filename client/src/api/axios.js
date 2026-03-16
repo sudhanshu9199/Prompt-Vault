@@ -4,45 +4,19 @@ const TOKEN_KEY = "token";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
+  timeout: 10_000,
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
   },
 });
 
-const getToken = () => {
-  try {
-    return localStorage.getItem(TOKEN_KEY);
-  } catch (err) {
-    return null;
-  }
-};
-
-const clearToken = () => {
-  try {
-    localStorage.removeItem(TOKEN_KEY);
-  } catch (err) {}
-};
-
-api.interceptors.request.use(
-  (config) => {
-    const token = getToken();
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    console.error("API Request Error:", error.message);
-    return Promise.reject(error);
-  },
-);
-
 let isRedirecting = false;
 
 api.interceptors.response.use(
   (response) => response,
-  (err) => {
+  async (err) => {
     if (err.response) {
       const { status } = err.response;
 
@@ -50,8 +24,12 @@ api.interceptors.response.use(
         case 401:
           if (!isRedirecting) {
             isRedirecting = true;
-            clearToken();
-
+            
+            try {
+              await api.post('/auth/logout');
+            } catch (err) {
+              
+            }
             window.location.replace("/login");
           }
           break;

@@ -2,11 +2,14 @@ const userModel = require("../models/User.models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const SALT_ROUNDS = 12; // 12 is for prodution safe
-const FULL_NAME_MIN_LENGTH = 2;
-const FULL_NAME_MAX_LENGTH = 60;
-const PASSWORD_MIN_LENGTH = 8;
+
+const COOKIE_OPTIONS = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "strict",
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+};
 
 const generateToken = (payload) => {
   if (!process.env.JWT_SECRET) {
@@ -17,52 +20,12 @@ const generateToken = (payload) => {
   });
 };
 
-const sanitizeName = (name) => name.trim().replace(/\s+/g, " ");
-
 // register controller
 const registerController = async (req, res) => {
   try {
     const { fullName, email, password } = req.body;
-
-    const sanitizedName = sanitizeName(fullName);
-
-    if (sanitizedName.length < FULL_NAME_MIN_LENGTH) {
-      return res.status(400).json({
-        success: false,
-        message: `Full name must be at least ${FULL_NAME_MIN_LENGTH} characters long.`
-      })
-    }
-
-    if (sanitizedName.length > FULL_NAME_MAX_LENGTH) {
-      return res.status(400).json({
-        success: false,
-        message: `Full name must not exceed ${FULL_NAME_MAX_LENGTH} characters.`,
-      });
-    }
-
-
-    if (!fullName || !email || !password) {
-      return res.status(400).json({
-        message: "Full name, Email & password are required!",
-      });
-    }
-
-    if (!EMAIL_REGEX.test(email)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invaliid email format.',
-      });
-    }
-
-    if (password.length < PASSWORD_MIN_LENGTH) {
-      return res.status(400).json({
-        success: false,
-        message: `Password must be at least ${PASSWORD_MIN_LENGTH} characters long.`,
-      });
-    }
-
     const userExists = await userModel.findOne({
-      email: email.toLowerCase().trim(),
+      email
     });
 
     if (userExists) {
@@ -75,14 +38,12 @@ const registerController = async (req, res) => {
     const hashPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
     const newUser = await userModel.create({
-      fullName: sanitizedName,
-      email: email.toLowerCase().trim(),
+      fullName,
+      email,
       password: hashPassword,
     });
 
-    // const userResponse = newUser.toObject();
-    // delete userResponse.password
-
+    const token = generateToken({ userId: newUser._id, email: newUser.email });
     const userResponse = {
       _id: newUser._id,
       fullName: newUser.fullName,
@@ -90,7 +51,9 @@ const registerController = async (req, res) => {
       createdAt: newUser.createdAt,
     };
 
-    return res.status(201).json({
+    return res.status(201)
+    .cookie("token", token, COOKIE_OPTIONS)
+    .json({
       success: true,
       message: "User registered successfully!",
       user: userResponse,
@@ -110,16 +73,8 @@ const loginController = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: 'Email and password are required.',
-      });
-    }
-
     const user = await userModel.findOne({
-      email: email.toLowerCase().trim(),
-    }).select('+password');
+      email}).select('+password');
 
     if (!user) {
       return res.status(401).json({
@@ -142,9 +97,11 @@ const loginController = async (req, res) => {
       email: user.email,
     });
 
-    res.status(200).json({
+    return res.status(200)
+      .cookie('token', token, COOKIE_OPTIONS)
+    .json({
+      success: true,
       message: "Login successful",
-      token,
       user: {
         _id: user._id,
         fullName: user.fullName,
@@ -153,7 +110,7 @@ const loginController = async (req, res) => {
     });
   } catch (err) {
     console.error("Login Error", err.message);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Internal server error. Please try again later.",
     });
@@ -171,7 +128,7 @@ const getMe = async (req, res) => {
       });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       user: {
         _id: user._id,
@@ -181,10 +138,24 @@ const getMe = async (req, res) => {
     });
   } catch (err) {
     console.error('GetMe Error:', err.message);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Internal server error.",
     });
   }
 };
-module.exports = { registerController, loginController, getMe };
+
+const logoutController = (req, res) => {
+  return res
+  .clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+  })
+  .status(200)
+  .json({
+    success: true,
+    message: "Logged out successfully.",
+  });
+};
+module.exports = { registerController, loginController, getMe, logoutController };
